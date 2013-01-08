@@ -14,5 +14,5 @@ if __name__ == '__main__':
     import os
     from bottle import run
     port = int(os.environ.get('PORT', 8000))
-    run(host='localhost', port=port)
+    run(host='0.0.0.0', port=port)
 
