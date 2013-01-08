@@ -11,6 +11,8 @@ def static(s):
     return static_file(s, root='static')
 
 if __name__ == '__main__':
+    import os
     from bottle import run
-    run(host='localhost', port=8000)
+    port = int(os.environ.get('PORT', 8000))
+    run(host='localhost', port=port)
 
