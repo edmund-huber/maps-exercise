@@ -1,4 +1,6 @@
-from bottle import get, mako_view
+from bottle import get, mako_view, post
+
+import api
 
 @get('/')
 @mako_view('home')
