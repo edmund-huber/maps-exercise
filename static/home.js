@@ -20,9 +20,20 @@
                     $.each(d.results, function(_, i) {
                         var key = [i.longitude, i.latitude, i.name].join('@');
                         if (!markers.hasOwnProperty(key)) {
-                            var m = new google.maps.Marker({position: new google.maps.LatLng(i.latitude, i.longitude), title: i.name});
-                            m.setMap(map);
+                            var marker = new google.maps.Marker({position: new google.maps.LatLng(i.latitude, i.longitude), title: i.name});
+                            marker.setMap(map);
                             markers[key] = 1;
+                            var makeInfoWindow = function() {
+                                var updateForm = $('<form/>');
+                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.name})));
+                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.longitude})));
+                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.latitude})));
+                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.address})));
+                                updateForm.append($('<div/>').append($('<input/>', {type: 'submit', value: 'update'})));
+                                var infoWindow = new google.maps.InfoWindow({content: updateForm.html()});
+                                infoWindow.open(map, marker);
+                            };
+                            google.maps.event.addListener(marker, 'click', makeInfoWindow);
                         }
                     });
                 });
@@ -65,7 +76,7 @@
                             $.each(results, function(_, r) {
                                 var choice = $('<div/>', {class: 'fake-link sorry-where-choice', text: r.formatted_address});
                                 resultsDiv.append(choice);
-                                choice.click(Places.SubmitFlow.resultChosen.partial(resultsDiv, r));
+                                choice.click(Places.SubmitFlow.resultChosen.partial(r));
                             });
                             $('#new-spot-status').html(resultsDiv);
                         } else {
