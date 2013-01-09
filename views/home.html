@@ -1,11 +1,29 @@
 <%inherit file="/base.html"/>
+<%namespace name="base" file="/base.html"/>
 
 <%block name="title">Favorite spots!</%block>
 
 <%block name="header">
-<link rel="stylesheet" href="static/index.css">
+<link rel="stylesheet" href="/static/home.css">
 </%block>
 
-map
+<div id="map-canvas"></div>
 
-geocode html5, if that fails or is unavailable -> type it in
+<div id="controls-container">
+  <div id="controls">
+    <span id="new-spot-link" class="fake-link" href="#">Can't find your favorite spot?</span>
+    <form id="new-spot-form">
+      <%base:collapse>
+      <label for="new-spot-name">Name</label>
+      <input type="text" id="new-spot-name" name="name"><label for="new-spot-where">Where
+      </label><input type="text" id="new-spot-where" name="where">
+      <input type="submit" value="ADD IT">
+      </%base:collapse>
+    </form>
+    <div id="new-spot-status"></div>
+  </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmniblS8HNiyMrhhiMjIyhyDUh-GU3HfQ&sensor=false"></script>
+<script src="/static/home.js"></script>
+

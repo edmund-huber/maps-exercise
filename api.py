@@ -14,7 +14,8 @@ def api(f):
         try:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             return f(cur, *args, **kwargs)
-        except:
+        except Exception, e:
+            print str(e)
             raise HTTPError(400)
     return wrapped
 
@@ -52,6 +53,13 @@ def delete(cur):
 def view(cur, i):
     cur.execute('select * from places where id=%s', (i,))
     return cur.fetchone()
+
+@get('/api/all-in-bounds/:google_bounds')
+@api
+def all_in_bounds(cur, google_bounds):
+    min_lat, min_lng, max_lat, max_lng = map(float, google_bounds.split(','))
+    cur.execute('select * from places where longitude > %s and longitude < %s and latitude > %s and latitude < %s', (min_lng, max_lng, min_lat, max_lat))
+    return {'results': cur.fetchmany(100)}
 
 @get('/api/all')
 @get('/api/all/:offset')

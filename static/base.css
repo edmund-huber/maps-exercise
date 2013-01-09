@@ -1,0 +1,12 @@
+body {
+    font-family: helvetica, sans-serif;
+    font-size: 15px;
+}
+
+.fake-link {
+    cursor: pointer;
+}
+
+.fake-link:hover {
+    text-decoration: underline;
+}
