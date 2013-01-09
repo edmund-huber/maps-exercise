@@ -10,3 +10,7 @@ body {
 .fake-link:hover {
     text-decoration: underline;
 }
+
+input[type="submit"] {
+    cursor: pointer;
+}

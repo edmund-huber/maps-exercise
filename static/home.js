@@ -47,6 +47,12 @@
     Places.SubmitFlow = Places.SubmitFlow || {};
 
     Places.SubmitFlow.begin = function() {
+        // Check that they entered something.
+        if (($('#new-spot-name').attr('value') == '') || ($('#new-spot-where').attr('value') == '')) {
+            $('#new-spot-status').text('Please enter something!').show();
+            return;
+        }
+
         // Show 'geocoding..'
         $('#new-spot-form').fadeOut(250, function() {
             $('#new-spot-status').text('Geocoding..').show().delay(1000).queue(function(next) {
@@ -77,27 +83,32 @@
  
     Places.SubmitFlow.resultChosen = function(r) {
         $('#new-spot-status').text('Submitting..');
-        j = {
-            longitude: r.geometry.location.lng(),
-            latitude: r.geometry.location.lat(),
-            address: r.formatted_address,
-            name: $('#new-spot-name').attr('value')
-        };
-        $('#new-spot-name').attr('value', '');
-        $('#new-spot-where').attr('value', '');
-        $.ajax({'type': 'POST', 'url': '/api/new', 'data': j})
-            .fail(function() {
-                $('#new-spot-status').text('Oops. Come back later?');
-            })
-            .done(function(d) {
-                showPlacesInMap();
-                map.setCenter(new google.maps.LatLng(j.latitude, j.longitude));
-                $('#new-spot-status').text('"' + j.name + '" has been submitted!').delay(3000).queue(function(next) {
-                    $('#new-spot-status').hide();
-                    $('#new-spot-link').show();
-                    next();
+        if (undefined !== r.geometry) {
+            j = {
+                longitude: r.geometry.location.lng(),
+                latitude: r.geometry.location.lat(),
+                address: r.formatted_address,
+                name: $('#new-spot-name').attr('value')
+            };
+            $('#new-spot-name').attr('value', '');
+            $('#new-spot-where').attr('value', '');
+            $.ajax({'type': 'POST', 'url': '/api/new', 'data': j})
+                .fail(function() {
+                    $('#new-spot-status').text('Oops. Come back later?');
+                })
+                .done(function(d) {
+                    showPlacesInMap();
+                    map.setCenter(new google.maps.LatLng(j.latitude, j.longitude));
+                    $('#new-spot-status').text('"' + j.name + '" has been submitted!').delay(3000).queue(function(next) {
+                        $('#new-spot-status').hide();
+                        $('#new-spot-link').show();
+                        next();
+                    });
                 });
-            });
+        } else {
+            $('#new-spot-status').text('The location you gave is a little too vague. Please try again!');
+            $('#new-spot-form').show();
+        }
     };
 
 })();

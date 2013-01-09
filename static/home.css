@@ -44,7 +44,7 @@ html, body, #container {
 }
 
 #new-spot-form > input[type="text"] {
-    border-style: none;
+    border: 0;
     border-radius: 3px;
     background-color: rgba(0, 0, 0, 0.4);
     color: #fff;
@@ -52,7 +52,12 @@ html, body, #container {
 }
 
 #new-spot-form > input[type="submit"] {
+    border: 0;
+    border-radius: 3px;
+    background-color: #f00;
+    color: #fff;
     font-weight: bold;
+    padding: 5px;
     margin-left: 11px;
 }
 
