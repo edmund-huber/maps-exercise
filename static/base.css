@@ -4,6 +4,7 @@ body {
 }
 
 .fake-link {
+    color: blue;
     cursor: pointer;
 }
 

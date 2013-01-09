@@ -7,6 +7,15 @@ html, body, #container {
     height: 100%;
 }
 
+.marker-update-form > input[type="text"] {
+    display: block;
+}
+
+#delete-link {
+    font-size: 75%;
+    margin-left: 15px;
+}
+
 #controls-container {
     display: inline-block;
     position: absolute;

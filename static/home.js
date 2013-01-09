@@ -18,19 +18,30 @@
                 })
                 .done(function(d) {
                     $.each(d.results, function(_, i) {
-                        var key = [i.longitude, i.latitude, i.name].join('@');
-                        if (!markers.hasOwnProperty(key)) {
+                        if (!markers.hasOwnProperty(i.id)) {
                             var marker = new google.maps.Marker({position: new google.maps.LatLng(i.latitude, i.longitude), title: i.name});
                             marker.setMap(map);
-                            markers[key] = 1;
+                            markers[i.id] = 1;
                             var makeInfoWindow = function() {
-                                var updateForm = $('<form/>');
-                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.name})));
-                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.longitude})));
-                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.latitude})));
-                                updateForm.append($('<div/>').append($('<input/>', {type: 'text', value: i.address})));
-                                updateForm.append($('<div/>').append($('<input/>', {type: 'submit', value: 'update'})));
-                                var infoWindow = new google.maps.InfoWindow({content: updateForm.html()});
+                                var updateForm = $('<form/>', {class: 'marker-update-form'});
+                                updateForm.append($('<input/>', {type: 'hidden', name: 'id', value: i.id}));
+                                updateForm.append($('<input/>', {type: 'text', name: 'name', value: i.name}));
+                                updateForm.append($('<input/>', {type: 'text', name: 'longitude', value: i.longitude}));
+                                updateForm.append($('<input/>', {type: 'text', name: 'latitude', value: i.latitude}));
+                                updateForm.append($('<input/>', {type: 'text', name: 'address', value: i.address}));
+                                updateForm.append($('<input/>', {type: 'submit', value: 'Update'}));
+                                var deleteLink = $('<span/>', {id: 'delete-link', class: 'fake-link', text: 'delete'});
+                                updateForm.append(deleteLink);
+                                updateForm.submit(function(e) {
+                                    e.preventDefault();                                    
+                                    $.ajax({type: 'POST', url: '/api/update', data: $(e.target).formToJSON()})
+                                    infoWindow.close();
+                                });
+                                deleteLink.click(function() {
+                                    $.ajax({type: 'POST', url: '/api/delete', data: {id: i.id}});
+                                    infoWindow.close();
+                                });
+                                var infoWindow = new google.maps.InfoWindow({content: updateForm[0]});
                                 infoWindow.open(map, marker);
                             };
                             google.maps.event.addListener(marker, 'click', makeInfoWindow);
@@ -103,7 +114,7 @@
             };
             $('#new-spot-name').attr('value', '');
             $('#new-spot-where').attr('value', '');
-            $.ajax({'type': 'POST', 'url': '/api/new', 'data': j})
+            $.ajax({type: 'POST', url: '/api/new', data: j})
                 .fail(function() {
                     $('#new-spot-status').text('Oops. Come back later?');
                 })
