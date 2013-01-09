@@ -53,18 +53,18 @@
                 // Find the place(s) using Google's geocoder.
                 geocoder.geocode({address: $('#new-spot-where').attr('value')}, function(results, status) {
                     if (status === google.maps.GeocoderStatus.OK) {
-                        var resultsDiv = $('<div/>').append($('<div/>', {id: 'sorry-where'}).text('Sorry, where did you mean?'));
                         if (results.length > 1) {
                             // Multiple results: let them pick out.
+                            var resultsDiv = $('<div/>').append($('<div/>', {id: 'sorry-where'}).text('Sorry, where did you mean?'));
                             $.each(results, function(_, r) {
                                 var choice = $('<div/>', {class: 'fake-link sorry-where-choice', text: r.formatted_address});
                                 resultsDiv.append(choice);
                                 choice.click(Places.SubmitFlow.resultChosen.partial(resultsDiv, r));
                             });
+                            $('#new-spot-status').html(resultsDiv);
                         } else {
-                            Places.SubmitFlow.resultChosen(resultsDiv, results[0]);
+                            Places.SubmitFlow.resultChosen(results[0]);
                         }
-                        $('#new-spot-status').html(resultsDiv);
                     } else {
                         $('#new-spot-status').text("We couldn't find that address! So sorry.");
                         $('#new-spot-form').show();
@@ -75,7 +75,7 @@
         });
     };
  
-    Places.SubmitFlow.resultChosen = function(resultsDiv, r) {
+    Places.SubmitFlow.resultChosen = function(r) {
         $('#new-spot-status').text('Submitting..');
         j = {
             longitude: r.geometry.location.lng(),
