@@ -83,6 +83,8 @@
             address: r.formatted_address,
             name: $('#new-spot-name').attr('value')
         };
+        $('#new-spot-name').attr('value', '');
+        $('#new-spot-where').attr('value', '');
         $.ajax({'type': 'POST', 'url': '/api/new', 'data': j})
             .fail(function() {
                 $('#new-spot-status').text('Oops. Come back later?');
