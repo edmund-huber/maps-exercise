@@ -57,6 +57,7 @@
         });
         deleteLink.click(function() {
             $.ajax({type: 'POST', url: '/api/delete', data: {id: place.id}});
+            marker.setMap(null);
             infoWindow.close();
         });
         var infoWindow = new google.maps.InfoWindow({content: updateForm[0]});
