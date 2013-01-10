@@ -1,4 +1,4 @@
-from bottle import HTTPError, HTTPResponse, get, post, request, response
+from bottle import HTTPError, HTTPResponse, default_app, get, post, request, response
 import os
 import psycopg2
 import psycopg2.extras
@@ -9,26 +9,27 @@ u = urlparse(os.environ['DATABASE_URL'])
 conn = psycopg2.connect(host=u.hostname, port=u.port, user=u.username, password=u.password, database=u.path[1:])
 conn.autocommit = True
 
+app = default_app()
+
 def api(f):
     def wrapped(*args, **kwargs):
         try:
             cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             return f(cur, *args, **kwargs)
         except Exception, e:
-            print str(e)
             raise HTTPError(400)
     return wrapped
 
 @post('/api/new')
 @api
 def new(cur):
-    cur.execute('insert into places (longitude, latitude, address, name) values (%s, %s, %s, %s)', (
+    cur.execute('insert into places (longitude, latitude, address, name) values (%s, %s, %s, %s) returning id', (
             request.forms['longitude'],
             request.forms['latitude'],
             request.forms['address'],
             request.forms['name']
             ))
-    return None
+    return {'id': cur.fetchone()['id']}
 
 @post('/api/update')
 @api
@@ -52,7 +53,7 @@ def delete(cur):
 @api
 def view(cur, i):
     cur.execute('select * from places where id=%s', (i,))
-    return cur.fetchone()
+    return cur.fetchone() or {}
 
 @get('/api/all-in-bounds/:google_bounds')
 @api
